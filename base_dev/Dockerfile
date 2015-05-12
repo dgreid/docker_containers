@@ -1,7 +1,7 @@
 from ubuntu:14.04
 
-RUN apt-get update
-RUN apt-get -y install build-essential vim git libasound-dev libspeexdsp-dev libgtest-dev libtool automake libdbus-1-dev libudev-dev g++ ladspa-sdk libsndfile-dev libsbc-dev cmake screen
+RUN apt-get -y update
+RUN apt-get -y install build-essential vim git libasound-dev libspeexdsp-dev libgtest-dev libtool automake libdbus-1-dev libudev-dev g++ ladspa-sdk libsndfile-dev libsbc-dev cmake tmux gdb man
 RUN apt-get clean
 RUN cd /tmp && git clone https://github.com/ndevilla/iniparser.git && \
 	    cd iniparser && \
