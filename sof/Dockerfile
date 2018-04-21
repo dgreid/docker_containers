@@ -7,15 +7,15 @@
 # Usage:
 # check out sof
 # build docker image: 
-# docker build -t sof .
-# docker run -it  -v <insert sof dir here>:/home/sof/workdir --user `id -u` sof
+# docker build --build-arg UID=$(id -u) -t sof .
+# docker run -it  -v <insert sof dir here>:/home/sof/workdir -v <soft git dir>:/home/sof/work/soft.git --user `id -u` sof
 #
 # For incremental builds:
-# docker run -it  -v <insert sof dir here>:/home/sof/workdir --user `id -u` sof make 
-# docker run -it  -v <insert sof dir here>:/home/sof/workdir --user `id -u` sof make bin
+# docker run -it  -v <insert sof dir here>:/home/sof/work/sof.git -v <soft git dir>:/home/sof/work/soft.git --user `id -u` sof ./incremental.sh
 #
 
 FROM ubuntu
+ARG UID=1000
 
 RUN apt-get -y update && \
 	    apt-get install -y \
@@ -53,7 +53,7 @@ RUN cd /root/alsa-build && git clone git://git.alsa-project.org/alsa-utils.git
 RUN cd /root/alsa-build/alsa-lib && ./gitcompile &&  make install
 RUN cd /root/alsa-build/alsa-utils && ./gitcompile &&  make install
 
-RUN useradd --create-home -d /home/sof -G sudo sof
+RUN useradd --create-home -d /home/sof -u $UID -G sudo sof
 RUN echo "sof:test0000" | chpasswd
 ENV HOME /home/sof
 
@@ -64,12 +64,14 @@ RUN git clone https://github.com/01org/osadsp-crosstool-ng.git /home/sof/ct-ng.g
 RUN git clone https://github.com/jcmvbkbc/newlib-xtensa.git /home/sof/newlib-xtensa.git
 
 USER sof
+RUN mkdir -p /home/sof/bin
 WORKDIR /home/sof/soft.git 
 RUN ./autogen.sh
-RUN ./configure
+RUN ./configure --prefix=/home/sof/bin
 RUN make
-USER root
 RUN make install
+
+ENV PATH="/home/sof/bin/bin:${PATH}"
 
 USER sof
 WORKDIR /home/sof/ct-ng.git
@@ -98,7 +100,14 @@ USER root
 RUN make install
 
 USER sof
-RUN mkdir -p /home/sof/workdir
+RUN mkdir -p /home/sof/work/sof
+RUN mkdir -p /home/sof/work/soft
 
-WORKDIR /home/sof/workdir
-CMD ./autogen.sh && ./configure --with-arch=xtensa --with-platform=cherrytrail --with-root-dir=~/sof-sdk/xtensa-root/xtensa-byt-elf --host=xtensa-byt-elf && make && make bin
+USER root
+COPY build_sof.sh build_soft.sh full_build.sh incremental.sh /home/sof/work/
+RUN chown -R sof /home/sof/work
+RUN chmod +x /home/sof/work/*.sh
+
+USER sof
+WORKDIR /home/sof/work
+CMD ./full_build.sh
