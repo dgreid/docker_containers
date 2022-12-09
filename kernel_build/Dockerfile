@@ -27,6 +27,7 @@ RUN apt-get -y update && \
 	    bc \
 	    bison \
 	    flex \
+	    lftp \
 	    libelf-dev \
 	    libssl-dev \
 	    libncurses-dev \
@@ -34,7 +35,8 @@ RUN apt-get -y update && \
 	    python3-git \
 	    libgmp3-dev \
 	    libmpc-dev \
-	    wget
+	    wget \
+	    xz-utils
 RUN apt-get clean
 
 ENV RUSTUP_HOME=/usr/local/rustup \
