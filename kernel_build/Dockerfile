@@ -40,7 +40,7 @@ RUN apt-get -y update && \
 RUN apt-get clean
 
 ENV RUSTUP_HOME=/usr/local/rustup \
-    RUST_ARCH=aarch64-unknown-linux-gnu \
+    RUST_ARCH=x86_64-unknown-linux-gnu \
     RUSTUP_VERSION=1.25.1 \
     CARGO_HOME=/usr/local/cargo \
     RUST_VERSION=1.62.0 \
@@ -57,7 +57,6 @@ RUN rustup target add riscv64gc-unknown-linux-gnu
 RUN rustup component add rust-src
 RUN rustup component add rustfmt
 RUN rustup component add clippy
-RUN cargo install bindgen
 RUN chmod -R a+w $RUSTUP_HOME $CARGO_HOME;
 
 ENV ARCH=x86_64
