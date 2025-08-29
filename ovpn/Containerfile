@@ -1,0 +1,11 @@
+# BUILD: podman build -t ovpn_run .
+# RUN: podman run -v ~/rivosvpn/dylan.ovpn:/dylan.ovpn -v ~/rivosvpn/credentials.txt:/credentials.txt -it --rm --cap-add=NET_ADMIN --device /dev/net/tun --name rivosvpn ovpn_run
+
+from ubuntu:24.04
+
+RUN apt-get -y update && \
+    apt-get install -y \
+    openvpn openvpn-systemd-resolved
+RUN apt-get clean
+
+CMD openvpn --config /dylan.ovpn --auth-user-pass /credentials.txt
