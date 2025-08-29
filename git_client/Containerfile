@@ -1,0 +1,11 @@
+# BUILD: podman build -t git_client .
+# RUN: ~/scripts/git_client.sh <git command>
+
+from ubuntu:24.04
+
+RUN apt-get -y update && \
+    apt-get install -y \
+    git curl
+RUN apt-get clean
+VOLUME /src
+WORKDIR /src
