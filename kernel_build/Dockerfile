@@ -21,6 +21,7 @@ RUN apt-get -y update && \
 	    g++ \
 	    clang \
 	    kmod \
+            libdw-dev \
 	    llvm \
 	    lld \
 	    device-tree-compiler \
