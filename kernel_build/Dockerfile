@@ -26,6 +26,7 @@ RUN apt-get -y update && \
 	    device-tree-compiler \
 	    bc \
 	    bison \
+            elfutils \
 	    flex \
 	    lftp \
 	    libelf-dev \
